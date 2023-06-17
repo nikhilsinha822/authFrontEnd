@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../api/axios";
+import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%]).{8,24}$/;
@@ -29,25 +30,18 @@ const Registration = () => {
   const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
-
+  
   useEffect(() => {
     userRef.current.focus();
   }, []);
+
   useEffect(() => {
-    const result = USER_REGEX.test(user);
-    console.log(result);
-    console.log(user);
-    setValidName(result);
+    setValidName(USER_REGEX.test(user));
   }, [user]);
 
   useEffect(() => {
-    const result = PWD_REGEX.test(pwd);
-    console.log(result);
-    console.log(pwd);
-    setValidPwd(result);
-    const match = pwd === matchPwd;
-    setValidMatch(match);
+    setValidPwd(PWD_REGEX.test(pwd));
+    setValidMatch(pwd === matchPwd);
   }, [pwd, matchPwd]);
 
   useEffect(() => {
@@ -69,7 +63,7 @@ const Registration = () => {
             withCredentials: true
           })
           console.log(JSON.stringify(response))
-          setSuccess(true);
+          
       } catch (err) {
           if(!err?.response){
             setErrMsg("No Server response")
@@ -184,7 +178,7 @@ const Registration = () => {
         <p>
           Alreday Registered?<br/>
           <span className="line">
-            <a href="#">Sign In</a>
+            <Link to="/">Sign In</Link>
           </span>
         </p>
       </form>

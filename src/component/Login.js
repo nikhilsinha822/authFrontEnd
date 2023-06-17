@@ -1,22 +1,26 @@
-import React, { useRef, useState, useEffect,useContext } from "react";
-import { AuthContext } from "../context/AuthorProvider";
+import React, { useRef, useState, useEffect } from "react";
+import useAuth from "../hooks/useAuth";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+
 import axios from "../api/axios";
-const LOGIN_URL = '/auth';
+const LOGIN_URL = "/auth";
 
 const Login = () => {
-  const {setAuth} = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  const { setAuth } = useAuth();
+
   const userRef = useRef();
   const errRef = useRef();
 
-  const [user, setUser] = useState();
-  const [pwd, setPwd] = useState();
-  const [errMsg, setErrMsg] = useState();
-
-  const [success, setSuccess] = useState(false);
+  const [user, setUser] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
     userRef.current.focus();
-  },[]);
+  }, []);
 
   useEffect(() => {
     setErrMsg("");
@@ -25,31 +29,34 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(LOGIN_URL, 
-        JSON.stringify({user, pwd}),{
-          headers: { 'Content-Type': 'application/json'},
-          withCredentials: true
-        })
-        console.log(JSON.stringify(response));
-        const accessToken = response?.data?.accessToken;
-        const roles = response?.data?.roles;
-        setAuth({user, pwd, roles, accessToken});
-        setUser('');
-        setPwd('');
-        setSuccess('');
-    } catch (err) {
-        if(!err?.response){
-          setErrMsg('NO server response');
-        } else if(err.response?.status === 400){
-          setErrMsg('Missing Username or Password');
-        } else if (err.response?.status === 400){
-          setErrMsg('Unauthorized');
-        } else{
-          setErrMsg('Login Failed');
+      const response = await axios.post(
+        LOGIN_URL,
+        JSON.stringify({ user, pwd }),
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         }
-        errRef.current.focus();
+      );
+      const accessToken = response?.data?.accessToken;
+      const roles = response?.data?.roles;
+      setAuth({ user, pwd, roles, accessToken });
+      setUser("");
+      setPwd("");
+      navigate(from, {replace: true});
+
+    } catch (err) {
+      if (!err?.response) {
+        setErrMsg("NO server response");
+      } else if (err.response?.status === 400) {
+        setErrMsg("Missing Username or Password");
+      } else if (err.response?.status === 400) {
+        setErrMsg("Unauthorized");
+      } else {
+        setErrMsg("Login Failed");
+      }
+      errRef.current.focus();
     }
-  }
+  };
   return (
     <section>
       <p
@@ -81,10 +88,13 @@ const Login = () => {
         />
         <button>Sign In</button>
       </form>
-      <p>Need an Account?<br/>
-      <span className="line">
-        <a href="#">Sign Up</a>
-      </span></p>
+      <p>
+        Need an Account?
+        <br />
+        <span className="line">
+          <Link to="/register">Sign Up</Link>
+        </span>
+      </p>
     </section>
   );
 };
