@@ -1,4 +1,4 @@
-import Registration from "./component/Registration";
+import Register from "./component/Register";
 import Login from "./component/Login";
 import Home from "./component/Home";
 import Layout from "./component/Layout";
@@ -21,7 +21,7 @@ function App() {
   return <Routes>
     <Route path='/' element={<Layout/>}>
       <Route path='login' element={<Login/>}/>
-      <Route path='register' element={<Registration/>}/>
+      <Route path='register' element={<Register/>}/>
       <Route path='linkpage' element={<LinkPage/>}/>
       <Route path='unauthorized' element={<Unauthorized/>}/>
       

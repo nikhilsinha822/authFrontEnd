@@ -14,8 +14,8 @@ const Login = () => {
   const userRef = useRef();
   const errRef = useRef();
 
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
+  const [user, setUser] = useState("Admin@1234");
+  const [pwd, setPwd] = useState("Admin@1234");
   const [errMsg, setErrMsg] = useState("");
 
   useEffect(() => {
